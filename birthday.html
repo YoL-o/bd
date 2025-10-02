@@ -756,9 +756,7 @@
 
     <!-- MUSIC CONTROL -->
     <div id="musicControl" title="Toggle Music">🔊</div>
-    <audio id="bgMusic" loop>
-        <source src="birthday-music.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" loop></audio>
 
     <!-- ORIENTATION PRELOADER -->
     <div id="orientationPreloader">Please rotate to landscape for the best experience</div>
@@ -793,7 +791,7 @@
     <script>
         // ==================== CONFIGURATION ====================
         const CONFIG = {
-            musicFile: 'birthday-music.mp3',
+            musicFile: 'happy-birthday-to-you-piano-version-13976.mp3',
             coverImage: 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=800',
             imageUrls: [
                 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -871,15 +869,7 @@
             setTimeout(() => {
                 preloader.classList.add('hidden');
                 setTimeout(() => {
-                    startMatrixStage();
-                    // Try to autoplay music
-                    bgMusic.play().then(() => {
-                        musicPlaying = true;
-                        musicControl.textContent = '🔊';
-                    }).catch(() => {
-                        musicPlaying = false;
-                        musicControl.textContent = '🔇';
-                    });
+                    startMatrixStage(); // Music will start on first user interaction
                 }, 1000);
             }, CONFIG.preloaderDuration);
 
@@ -1151,6 +1141,18 @@
             let currentPage = 0;
 
             function flipNext() {
+                // Play music on first flip
+                if (currentPage === 0 && !musicPlaying) {
+                    bgMusic.play().then(() => {
+                        musicPlaying = true;
+                        musicControl.textContent = '🔊';
+                    }).catch((e) => {
+                        console.error("Music play failed:", e);
+                        musicPlaying = false;
+                        musicControl.textContent = '🔇';
+                    });
+                }
+
                 if (currentPage < pageElements.length) {
                     pageElements[currentPage].classList.add('flipped');
                     currentPage++;
@@ -1416,14 +1418,12 @@
         // ==================== START ====================
         window.addEventListener('load', () => {
             startExperience();
-             // Try to autoplay music after a user interaction might be needed
-            bgMusic.play().then(() => {
-                musicPlaying = true;
-                musicControl.textContent = '🔊';
-            }).catch(() => {
-                musicPlaying = false;
-                musicControl.textContent = '🔇';
-            });
+            // Set music source from config and load it
+            const bgMusicSource = document.createElement('source');
+            bgMusicSource.src = CONFIG.musicFile;
+            bgMusicSource.type = 'audio/mpeg';
+            bgMusic.appendChild(bgMusicSource);
+            bgMusic.load();
         });
     </script>
 </body>
