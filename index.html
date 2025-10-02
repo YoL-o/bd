@@ -410,7 +410,7 @@
 
         .page-content img {
             max-width: 90%;
-            max-height: 70%;
+            max-height: 90%;
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -974,8 +974,8 @@
 
         const matrixChars = 'HAPPY BIRTHDAY '.split('');
         const fontSize = 16;
-        const columns = matrixCanvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        let columns = matrixCanvas.width / fontSize;
+        let drops = Array(Math.floor(columns)).fill(1);
 
         let matrixAnimationId;
         let matrixSpeed = 1;
@@ -1480,6 +1480,9 @@
         window.addEventListener('resize', () => {
             matrixCanvas.width = window.innerWidth;
             matrixCanvas.height = window.innerHeight; // Resize particle canvas as well
+            columns = matrixCanvas.width / fontSize;
+            drops = Array(Math.floor(columns)).fill(1);
+
             particleCanvas.width = window.innerWidth; // Recreate heart collage on resize to maintain proper positioning
             particleCanvas.height = window.innerHeight; if (heartStage.classList.contains('active')) {
                 const cards = createHeartCollage();
