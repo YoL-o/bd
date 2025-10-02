@@ -517,10 +517,10 @@
         /* Heart Container */
         .heart-container {
             position: relative;
-            width: 50vw;
-            height: 50vw;
-            max-width: 400px;
-            max-height: 400px;
+            width: 60vw;
+            height: 60vw;
+            max-width: 480px;
+            max-height: 480px;
             animation: heartPulse 3s infinite ease-in-out 2s;
 
         }
@@ -528,8 +528,8 @@
         /* Photo Cards */
         .photo-card {
             position: absolute;
-            width: 12.5vw; /* Use viewport width */
-            height: 12.5vw; /* Use viewport width */
+            width: 10vw; /* Reduced size for more cards and spacing */
+            height: 11vw; /* Slightly off-square */
             background-color: #111;
             border-radius: 15px;
             overflow: hidden;
@@ -542,11 +542,11 @@
             border: 2px solid #FF69B4;
             animation: card-float 6s infinite ease-in-out;
             /* Add max size for larger screens */
-            max-width: 100px;
-            max-height: 100px;
+            max-width: 80px;
+            max-height: 88px;
             /* Add min size for very small screens */
-            min-width: 60px;
-            min-height: 60px;
+            min-width: 48px;
+            min-height: 53px;
         }
 
         .photo-card:hover {
@@ -861,6 +861,21 @@
                 'https://images.pexels.com/photos/1181373/pexels-photo-1181373.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1181376/pexels-photo-1181376.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181280/pexels-photo-1181280.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181325/pexels-photo-1181325.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181359/pexels-photo-1181359.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181373/pexels-photo-1181373.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181376/pexels-photo-1181376.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181311/pexels-photo-1181311.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181304/pexels-photo-1181304.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1181280/pexels-photo-1181280.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -1263,30 +1278,21 @@
         // ==================== HEART SHAPE CALCULATION ====================
         function calculateHeartPoints(numPoints) {
             const points = [];
-            const scale = 0.7; // Scale to fit container
+            const scale = 0.55; // Increased scale for more spacing
 
             for (let i = 0; i < numPoints; i++) {
-                // Parametric heart equation
                 const t = (i / numPoints) * 2 * Math.PI;
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
 
-                // Normalize and scale
-                const normalizedX = (x / 16) * scale;
-                const normalizedY = (y / 16) * scale;
-
-                // Calculate angle for card rotation (tangent to the curve)
-                const nextT = ((i + 1) % numPoints) / numPoints * 2 * Math.PI;
-                const nextX = 16 * Math.pow(Math.sin(nextT), 3);
-                const nextY = -(13 * Math.cos(nextT) - 5 * Math.cos(2 * nextT) - 2 * Math.cos(3 * nextT) - Math.cos(4 *
-                    nextT));
-
-                const angle = Math.atan2(nextY - y, nextX - x) * 180 / Math.PI;
+                // Normalize and scale with additional spacing adjustment
+                const normalizedX = (x / 16) * scale * 1.2; // Slightly wider spacing
+                const normalizedY = (y / 16) * scale * 1.2; // Slightly taller spacing
 
                 points.push({
                     x: normalizedX,
                     y: normalizedY,
-                    angle: angle + (Math.random() * 16 - 8) // Add slight rotation variance
+                    angle: 0 // No rotation
                 });
             }
 
@@ -1317,7 +1323,7 @@
             const container = document.getElementById('heartContainer');
             container.innerHTML = '';
 
-            const numCards = Math.min(CONFIG.collageImageUrls.length, 20); // Limit to 20 cards for better shape
+            const numCards = Math.min(CONFIG.collageImageUrls.length, 40); // Increased number of cards
             const heartPoints = calculateHeartPoints(numCards);
 
             const cards = [];
@@ -1330,14 +1336,11 @@
                 img.src = CONFIG.collageImageUrls[index % CONFIG.collageImageUrls.length];
                 card.appendChild(img);
 
-                // Calculate final position (convert normalized coordinates to percentages)
+                // Calculate final position with increased spacing
                 const finalX = 50 + (point.x * 100);
                 const finalY = 50 + (point.y * 100);
 
-                // Final position and rotation
-                const finalTransform = `rotate(${point.angle}deg)`;
-                const cardSize = card.offsetWidth; // Get the actual size of the card
-                card.style.setProperty('--end-transform', `translate(-50%, -50%) rotate(${point.angle}deg)`);
+                card.style.setProperty('--end-transform', `translate(-50%, -50%)`);
                 card.style.left = `${finalX}%`;
                 card.style.top = `${finalY}%`;
 
@@ -1350,11 +1353,11 @@
                 const startX = Math.cos(angle) * startDistance;
                 const startY = Math.sin(angle) * startDistance;
                 const startTransform =
-                    `translateX(${startX}px) translateY(${startY}px) rotate(${Math.random() * 180 - 90}deg)`;
+                    `translateX(${startX}px) translateY(${startY}px)`;
                 card.style.setProperty('--start-transform', startTransform);
 
-                // Set animation delay for staggering
-                card.style.animationDelay = `${index * 150}ms, ${index * 150 + 1000}ms`;
+                // Set animation delay for staggering with more cards
+                card.style.animationDelay = `${index * 100}ms, ${index * 100 + 1000}ms`;
 
                 container.appendChild(card);
 
@@ -1385,7 +1388,7 @@
                             centerMessage.classList.add('show');
                         }, 500);
                     }
-                }, index * 150);
+                }, index * 100); // Adjusted for more cards
             });
         }
 
