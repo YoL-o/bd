@@ -111,6 +111,63 @@
             transform-origin: 100% 100%;
         }
 
+        /* === ORIENTATION PRELOADER === */
+        #orientationPreloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000 0%, #6b1b6b 50%, #ff4da6 100%);
+            color: #ff4da6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #orientationPreloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .orientation-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: rotateDevice 2s ease-in-out infinite;
+        }
+
+        @keyframes rotateDevice {
+            0% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(90deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .orientation-text {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ff4da6, 0 0 40px #ff4da6, 0 0 60px #ff1493;
+        }
+
+        .orientation-subtext {
+            font-size: 1.2rem;
+            max-width: 500px;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+
         /* === MUSIC CONTROL === */
         #musicControl {
             position: fixed;
@@ -126,7 +183,7 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            z-index: 9999;
+            z-index: 9998;
             transition: all 0.3s ease;
         }
 
@@ -136,28 +193,6 @@
             transform: scale(1.1);
         }
 
-        #orientationPreloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            color: #ff4da6;
-            font-size: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-            opacity: 1;
-            transition: opacity 1s ease;
-            display: none; /* Initially hidden */
-        }
-
-        #orientationPreloader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
         /* === STAGE 1: MATRIX === */
         #matrixStage {
             position: fixed;
@@ -754,14 +789,18 @@
         <div class="heart-loader"></div>
     </div>
 
+    <!-- ORIENTATION PRELOADER -->
+    <div id="orientationPreloader" class="hidden">
+        <div class="orientation-icon">📱</div>
+        <div class="orientation-text">Please Rotate Your Device</div>
+        <div class="orientation-subtext">For the best experience, please rotate your device to landscape mode.</div>
+    </div>
+
     <!-- MUSIC CONTROL -->
     <div id="musicControl" title="Toggle Music">🔊</div>
     <audio id="bgMusic" loop>
         <source src="birthday-music.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- ORIENTATION PRELOADER -->
-    <div id="orientationPreloader">Please rotate to landscape for the best experience</div>
 
     <!-- STAGE 1: MATRIX -->
     <div id="matrixStage">
@@ -837,9 +876,11 @@
         // ==================== STATE ====================
         let currentStage = 0;
         let musicPlaying = false;
+        let orientationChecked = false;
 
         // ==================== ELEMENTS ====================
         const preloader = document.getElementById('preloader');
+        const orientationPreloader = document.getElementById('orientationPreloader');
         const matrixStage = document.getElementById('matrixStage');
         const flipbookStage = document.getElementById('flipbookStage');
         const heartStage = document.getElementById('heartStage');
@@ -852,6 +893,34 @@
         const secretMessage = document.getElementById('secretMessage');
 
         centerMessage.textContent = CONFIG.hiddenMessage;
+
+        // ==================== ORIENTATION DETECTION ====================
+        function isPortrait() {
+            return window.innerHeight > window.innerWidth;
+        }
+
+        function checkOrientation() {
+            if (isPortrait() && window.innerWidth <= 768) {
+                // Show orientation preloader for mobile portrait
+                orientationPreloader.classList.remove('hidden');
+                return false;
+            } else {
+                // Hide orientation preloader and proceed
+                orientationPreloader.classList.add('hidden');
+                return true;
+            }
+        }
+
+        function handleOrientationChange() {
+            if (!orientationChecked) return;
+            
+            if (checkOrientation()) {
+                // If orientation is now correct, start the experience
+                if (currentStage === 0) {
+                    startMatrixStage();
+                }
+            }
+        }
 
         // ==================== MUSIC CONTROL ====================
         musicControl.addEventListener('click', () => {
@@ -870,8 +939,16 @@
         function startExperience() {
             setTimeout(() => {
                 preloader.classList.add('hidden');
-                setTimeout(() => {
+                
+                // Check if we need to show the orientation preloader
+                if (!checkOrientation()) {
+                    // Wait for orientation change
+                    orientationChecked = true;
+                } else {
+                    // Start the experience immediately
+                    orientationChecked = true;
                     startMatrixStage();
+                    
                     // Try to autoplay music
                     bgMusic.play().then(() => {
                         musicPlaying = true;
@@ -880,9 +957,8 @@
                         musicPlaying = false;
                         musicControl.textContent = '🔇';
                     });
-                }, 1000);
+                }
             }, CONFIG.preloaderDuration);
-
         }
 
         // ==================== STAGE 1: MATRIX ====================
@@ -1411,6 +1487,11 @@
                     card.classList.add('visible');
                 });
             }
+            
+            // Check orientation on resize
+            if (orientationChecked) {
+                handleOrientationChange();
+            }
         });
 
         // ==================== START ====================
@@ -1425,6 +1506,9 @@
                 musicControl.textContent = '🔇';
             });
         });
+        
+        // Listen for orientation changes
+        window.addEventListener('orientationchange', handleOrientationChange);
     </script>
 </body>
 
