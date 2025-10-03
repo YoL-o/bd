@@ -1342,8 +1342,8 @@
 
         const matrixChars = 'HAPPY BIRTHDAY '.split('');
         const fontSize = 16;
-        const columns = matrixCanvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        let columns = matrixCanvas.width / fontSize;
+        let drops = Array(Math.floor(columns)).fill(1);
 
         let matrixAnimationId;
         let matrixSpeed = 1;
