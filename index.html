@@ -349,20 +349,26 @@
 
         #bridgeEasterEgg {
             position: fixed;
-            bottom: -60px; /* Adjusted to ensure outside */
-            right: -60px;  /* Adjusted to ensure outside */
+            bottom: -60px;
+            /* Adjusted to ensure outside */
+            right: -60px;
+            /* Adjusted to ensure outside */
             font-size: 28px;
             cursor: pointer;
-            opacity: 0;    /* Initially hidden */
-            transition: opacity 0.5s ease, bottom 0.5s ease, right 0.5s ease; /* Add transition for position */
+            opacity: 0;
+            /* Initially hidden */
+            transition: opacity 0.5s ease, bottom 0.5s ease, right 0.5s ease;
+            /* Add transition for position */
             animation: eggGlow 2s ease-in-out infinite;
             z-index: 5001;
         }
 
         #bridgeEasterEgg.show {
             opacity: 1;
-            bottom: 30px; /* Animate into view */
-            right: 30px;  /* Animate into view */
+            bottom: 30px;
+            /* Animate into view */
+            right: 30px;
+            /* Animate into view */
         }
 
         /* === STAGE 2: FLIPBOOK === */
@@ -616,7 +622,8 @@
         /* Heart Container */
         .heart-container {
             position: relative;
-            width: min(80vw, 80vh); height: min(80vw, 80vh);
+            width: min(80vw, 80vh);
+            height: min(80vw, 80vh);
             max-width: 600px;
             max-height: 600px;
             animation: heartPulse 3s infinite ease-in-out 2s;
@@ -949,9 +956,21 @@
 
         /* === RESPONSIVE ADJUSTMENTS === */
         @media (max-width: 768px) and (orientation: landscape) {
-            .heart-container { width: min(90vw, 120vh); height: min(90vw, 120vh); max-width: 500px; max-height: 600px; }
+            .heart-container {
+                width: min(90vw, 120vh);
+                height: min(90vw, 120vh);
+                max-width: 500px;
+                max-height: 600px;
+            }
 
-            .photo-card { width: 10vw; height: 10.5vw; max-width: 70px; max-height: 75px; min-width: 40px; min-height: 45px; }
+            .photo-card {
+                width: 10vw;
+                height: 10.5vw;
+                max-width: 70px;
+                max-height: 75px;
+                min-width: 40px;
+                min-height: 45px;
+            }
 
             .center-message {
                 font-size: 1.8rem;
@@ -1043,17 +1062,17 @@
     <script>
         // ==================== CONFIGURATION ====================
         const CONFIG = {
-            musicFile: './JVKE_-_her_@BaseNaija.mp3',
+            musicFile: '/assets/JVKE_-_her_@BaseNaija.mp3',
             coverImage: 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=800',
             imageUrls: [
-                './wmremove-transformed (1).png',
-                './wmremove-transformed (1).png',
-                './wmremove-transformed (1).png',
-                './wmremove-transformed (1).png',
-                './wmremove-transformed (1).png',
-                './wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
+                '/assets/wmremove-transformed (1).png',
             ],
-            collageImageUrls: [
+        collageImageUrls: [
                 'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1468379/pexels-photo-1468379.jpeg?auto=compress&cs=tinysrgb&w=800',
                 'https://images.pexels.com/photos/1484806/pexels-photo-1484806.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -1283,8 +1302,12 @@
         });
 
         // Add this to ensure music plays on first touch on mobile
-        document.addEventListener('touchstart', playMusic, { once: true });
-        document.addEventListener('click', playMusic, { once: true });
+        document.addEventListener('touchstart', playMusic, {
+            once: true
+        });
+        document.addEventListener('click', playMusic, {
+            once: true
+        });
 
         // ==================== ORIENTATION DETECTION ====================
         function isPortrait() {
@@ -1679,7 +1702,8 @@
         // ==================== HEART SHAPE CALCULATION ====================
         function calculateHeartPoints(numPoints) {
             const points = [];
-            const scale = (window.innerWidth <= 768 && window.matchMedia('(orientation: landscape)').matches) ? 0.8 : (window.innerWidth <= 768 ? 0.5 : 0.6); // Adjust scale for mobile
+            const scale = (window.innerWidth <= 768 && window.matchMedia('(orientation: landscape)').matches) ? 0.8 : (
+                window.innerWidth <= 768 ? 0.5 : 0.6); // Adjust scale for mobile
 
             for (let i = 0; i < numPoints; i++) {
                 const t = (i / numPoints) * 2 * Math.PI;
@@ -1724,7 +1748,8 @@
             const container = document.getElementById('heartContainer');
             container.innerHTML = '';
 
-            const numCards = window.innerWidth <= 768 ? 12 : Math.min(CONFIG.collageImageUrls.length, 36); // Lesser on mobile
+            const numCards = window.innerWidth <= 768 ? 12 : Math.min(CONFIG.collageImageUrls.length,
+                36); // Lesser on mobile
             const heartPoints = calculateHeartPoints(numCards);
 
             const cards = [];
