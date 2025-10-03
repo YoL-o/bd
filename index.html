@@ -349,12 +349,12 @@
 
         #bridgeEasterEgg {
             position: fixed;
-            bottom: -30px; /* Position outside the screen */
-            right: -30px;  /* Position outside the screen */
+            bottom: -60px; /* Adjusted to ensure outside */
+            right: -60px;  /* Adjusted to ensure outside */
             font-size: 28px;
             cursor: pointer;
             opacity: 0;    /* Initially hidden */
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease, bottom 0.5s ease, right 0.5s ease; /* Add transition for position */
             animation: eggGlow 2s ease-in-out infinite;
             z-index: 5001;
         }
@@ -777,8 +777,6 @@
         .firework {
             position: fixed;
             pointer-events: none;
-            top: 0; /* Add top and left for positioning */
-            left: 0;
             z-index: 9997;
         }
 
@@ -797,7 +795,7 @@
             }
 
             100% {
-                transform: var(--tx) var(--ty);
+                transform: translate(var(--tx), var(--ty));
                 opacity: 0;
             }
         }
@@ -1028,7 +1026,6 @@
     <div id="bridgeStage">
         <div id="portal"></div>
         <div id="bridgeMessage"></div>
-        <div id="bridgeEasterEgg">✨</div>
     </div>
 
     <!-- STAGE 2: FLIPBOOK -->
@@ -1045,10 +1042,6 @@
         <div class="heart-container" id="heartContainer"></div>
         <div class="center-message" id="centerMessage">Forever 💖</div>
     </div>
-
-    <!-- EASTER EGG -->
-    <div id="easterEgg">💖</div>
-    <div class="secret-message" id="secretMessage">Made with ❤️ just for you</div>
 
     <!-- STAGE 4: FINAL MESSAGE -->
     <div id="finalMessageStage">
@@ -1265,14 +1258,10 @@
         const countdown = document.getElementById('countdown');
         const birthdayText = document.getElementById('birthdayText');
         const centerMessage = document.getElementById('centerMessage');
-        const easterEgg = document.getElementById('easterEgg');
-        const secretMessage = document.getElementById('secretMessage');
         const finalMessageStage = document.getElementById('finalMessageStage');
         const finalMessageText = document.getElementById('finalMessageText');
         const typewriterSound = document.getElementById('typewriterSound');
-        const chimeSound = document.getElementById('chimeSound');
         const bridgeMessage = document.getElementById('bridgeMessage');
-        const bridgeEasterEgg = document.getElementById('bridgeEasterEgg');
 
         centerMessage.textContent = CONFIG.hiddenMessage;
 
@@ -1289,7 +1278,13 @@
         }
 
         musicControl.addEventListener('click', () => {
-            musicPlaying ? bgMusic.pause() : bgMusic.play();
+            if (musicPlaying) {
+                bgMusic.pause();
+            } else {
+                playMusic();
+            }
+            musicPlaying = !musicPlaying;
+            musicControl.textContent = musicPlaying ? '🔊' : '🔇';
         });
 
         // ==================== ORIENTATION DETECTION ====================
@@ -1310,7 +1305,7 @@
         }
 
         function handleOrientationChange() {
-            checkOrientationAndStart();
+            setTimeout(checkOrientationAndStart, 100); // Delay to allow dimensions to update
         }
 
         // ==================== STAGE 0: PRELOADER ====
@@ -1521,33 +1516,9 @@
             bridgeMessage.style.opacity = '1'; // Make visible
             typeWriter(CONFIG.bridgeMessage, bridgeMessage, 100, () => {
                 setTimeout(() => {
-                    bridgeEasterEgg.classList.add('show');
-                }, 1000); // Show easter egg after message
-
-                setTimeout(() => {
                     bridgeStage.classList.remove('active');
                     startFlipbookStage();
-                }, 4000); // Proceed after pause
-            });
-
-            // Easter egg click
-            bridgeEasterEgg.addEventListener('click', () => {
-                chimeSound.cloneNode(true).play().catch(() => {});
-                createConfettiBurst(bridgeEasterEgg.offsetLeft, bridgeEasterEgg.offsetTop);
-                const popup = document.createElement('div');
-                popup.className = 'secret-message';
-                popup.style.bottom = '';
-                popup.style.top = bridgeEasterEgg.offsetTop + 40 + 'px';
-                popup.style.left = bridgeEasterEgg.offsetLeft + 'px';
-                popup.textContent = 'You found the secret! 🎉';
-                document.body.appendChild(popup);
-                popup.classList.add('show');
-                setTimeout(() => {
-                    popup.classList.remove('show');
-                    setTimeout(() => popup.remove(), 500);
-                }, 3000);
-            }, {
-                once: true
+                }, 3000); // Proceed after pause
             });
         }
 
@@ -1817,43 +1788,29 @@
             fireworkInterval = setInterval(() => createFireworks(false), 1500);
             petalInterval = createPetalShower();
 
-            // Show easter egg after a delay
-            setTimeout(() => {
-                easterEgg.classList.add('show');
-            }, 3000);
+            // Initial burst for particle explosion
+            createFireworks(true);
 
             // Show center message
             setTimeout(() => {
                 centerMessage.classList.add('show');
             }, 1000);
 
-            // Add click event to transition to final message
-            setTimeout(() => {
-                heartStage.style.cursor = 'pointer';
-                heartStage.addEventListener('click', transitionToFinalMessage, {
-                    once: true
-                });
-            }, 4000);
-        }
-
-        function transitionToFinalMessage() {
-            heartStage.style.cursor = 'default';
-            startFinalMessageStage();
+            // Automatically show final message after a few seconds
+            setTimeout(startFinalMessageStage, 5000);
         }
 
         // ==================== STAGE 4: FINAL MESSAGE ====================
         function startFinalMessageStage() {
             currentStage = 4;
             finalMessageStage.style.pointerEvents = 'all';
-            finalMessageStage.classList.add('active');
-            typeWriter(CONFIG.finalMessage, finalMessageText, 100);
-            // Continue the celebrations in final stage
+            finalMessageStage.classList.add('active'); // Make it visible
+            typeWriter(CONFIG.finalMessage, finalMessageText, 100); // Type out the message
+
+            // Add a click listener to hide the stage
             finalMessageStage.addEventListener('click', () => {
                 finalMessageStage.style.opacity = '0';
                 finalMessageStage.style.pointerEvents = 'none';
-                clearInterval(petalInterval);
-                clearInterval(fireworkInterval);
-                clearInterval(confettiInterval);
             }, {
                 once: true
             });
@@ -1903,7 +1860,7 @@
 
         function createFireworks(isBurst = false) {
             const firework = document.createElement('div');
-            firework.className = 'firework'; // This class now has top/left: 0
+            firework.className = 'firework';
             if (isBurst) {
                 firework.style.left = (Math.random() * 50 + 25) + '%'; // Center burst
                 firework.style.top = (Math.random() * 40 + 30) + '%';
@@ -1911,10 +1868,6 @@
                 firework.style.left = (Math.random() * 80 + 10) + '%';
                 firework.style.top = (Math.random() * 60 + 10) + '%';
             }
-            // The firework div itself is now positioned based on the above logic,
-            // and the particles will explode relative to it.
-            // The CSS for .firework now needs top and left to be set.
-
 
             const colors = ['#ff4da6', '#ff1493', '#ff69b4', '#ffd700', '#fff'];
 
@@ -1931,7 +1884,7 @@
                 particle.style.setProperty('--tx', tx);
                 particle.style.setProperty('--ty', ty);
 
-                firework.appendChild(particle);
+                firework.appendChild(particle); // Append particle to the firework container
             }
 
             document.body.appendChild(firework);
@@ -1968,40 +1921,11 @@
             }
         }
 
-        // ==================== EASTER EGG ====================
-        easterEgg.addEventListener('click', () => {
-            easterEgg.style.opacity = '0';
-
-            for (let i = 0; i < 12; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.textContent = '✨';
-                sparkle.style.left = easterEgg.offsetLeft + 'px';
-                sparkle.style.top = easterEgg.offsetTop + 'px';
-                sparkle.style.animationDelay = (i * 0.1) + 's';
-                document.body.appendChild(sparkle);
-
-                setTimeout(() => sparkle.remove(), 1000);
-            }
-
-            setTimeout(() => {
-                secretMessage.classList.add('show');
-
-                setTimeout(() => {
-                    secretMessage.classList.remove('show');
-                    setTimeout(() => {
-                        easterEgg.style.opacity = '1';
-                    }, 500);
-                }, 4000);
-            }, 500);
-        });
-
         // ==================== RESPONSIVE ====================
         window.addEventListener('resize', () => {
             matrixCanvas.width = window.innerWidth;
-            matrixCanvas.height = window.innerHeight; // Resize particle canvas as well
-            particleCanvas.width = window
-                .innerWidth; // Recreate heart collage on resize to maintain proper positioning
+            matrixCanvas.height = window.innerHeight;
+            particleCanvas.width = window.innerWidth;
             particleCanvas.height = window.innerHeight;
             columns = matrixCanvas.width / fontSize;
             drops = Array(Math.floor(columns)).fill(1);
@@ -2026,16 +1950,8 @@
             // Set typewriter sound
             const typewriterSoundSource = document.createElement('source');
             typewriterSoundSource.src =
-                'data:audio/wav;base64,UklGRigBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQBAADp/1r/u/+f/7T/ov+r/6f/q/+t/6//s//C/7r/vf+5/7v/wP/B/8L/xP/G/8f/yv/M/8//0//W/9j/2v/b/9z/3//h/+L/5P/n/+r/7P/u//H/8//2//j/+v/8//8AAgADAAQABgAHAAgACQALAAwADgAOAA8AEQASABMAFAAVABYAFwAYABkAGgAbABwAHQAeAB8AIAAhACIAIwAkACUAJgAnACgAKQAqACsALAAtAC4ALwAwADEAMgAzADQANQA2ADcAOAA5ADoAOwA8AD0APgA/AEAAQQBCAEMARABFAEYARwBIAEkASgBLAEwATQBOAE8AUABRAFIAUwBUAFUAVgBXAFgAWQBaAFsAXABdAF4AXwBgAGEAYgBjAGQAZQBmAGcAZABlAGYAZwBoAGkAaQBpAGoAawBrAGwAbQBtAG4AbwBwAHEAcgBzAHQAdQB2AHcAeAB5AHoAewB8AH0AfgB/AIAAgQCCAIMAhACFAIYAhwCIADs=';
+                'data:audio/wav;base64,UklGRigBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQBAADp/1r/u/+f/7T/ov+r/6f/q/+t/6//s//C/7r/vf+5/7v/wP/B/8L/xP/G/8f/yv/M/8//0//W/9j/2v/b/9z/3//h/+L/5P/n/+r/7P/u//H/8//2//j/+v/8//8AAgADAAQABgAHAAgACQALAAwADgAOAA8AEQASABMAFAAVABYAFwAYABkAGgAbABwAHQAeAB8AIAAhACIAIwAkACUAJgAnACgAKQAqACsALAAtAC4ALwAwADEAMgAzADQANQA2ADcAOAA5ADoAOwA8AD0APgA/AEAAQQBCAEMARABFAEYARwBIAEkASQBpAGoAawBrAGwAbQBtAG4AbwBwAHEAcgBzAHQAdQB2AHcAeAB5AHoAewB8AH0AfgB/AIAAgQCCAIMAhACFAIYAhwCIADs=';
             typewriterSoundSource.type = 'audio/wav';
-            typewriterSound.appendChild(typewriterSoundSource);
-
-            // Set chime sound
-            const chimeSoundSource = document.createElement('source');
-            chimeSoundSource.src =
-                'data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBIAAAAHAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA='; // Placeholder for chime sound, replace with actual base64 if available
-            chimeSoundSource.type = 'audio/wav';
-            chimeSound.appendChild(chimeSoundSource);
 
             bgMusic.onplaying = () => {
                 musicPlaying = true;
@@ -2046,10 +1962,13 @@
                 musicControl.textContent = '🔇';
             };
             bgMusic.load();
+
+            handleOrientationChange(); // Initial check
         });
 
         // Listen for orientation changes
         window.addEventListener('orientationchange', handleOrientationChange);
+        window.addEventListener('resize', handleOrientationChange); // Additional for reliability
     </script>
 </body>
 
