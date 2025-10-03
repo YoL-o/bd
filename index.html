@@ -616,8 +616,7 @@
         /* Heart Container */
         .heart-container {
             position: relative;
-            width: 80vw;
-            height: 80vh;
+            width: min(80vw, 80vh); height: min(80vw, 80vh);
             max-width: 600px;
             max-height: 600px;
             animation: heartPulse 3s infinite ease-in-out 2s;
@@ -950,21 +949,9 @@
 
         /* === RESPONSIVE ADJUSTMENTS === */
         @media (max-width: 768px) and (orientation: landscape) {
-            .heart-container {
-                width: 90vw;
-                height: 90vh;
-                max-width: 500px;
-                max-height: 500px;
-            }
+            .heart-container { width: min(90vw, 120vh); height: min(90vw, 120vh); max-width: 500px; max-height: 600px; }
 
-            .photo-card {
-                width: 12vw;
-                height: 12.5vw;
-                max-width: 60px;
-                max-height: 65px;
-                min-width: 35px;
-                min-height: 40px;
-            }
+            .photo-card { width: 10vw; height: 10.5vw; max-width: 70px; max-height: 75px; min-width: 40px; min-height: 45px; }
 
             .center-message {
                 font-size: 2rem;
@@ -992,14 +979,12 @@
     <div id="preloader">
         <div class="preloader-text">A little surprise is loading just for you…</div>
         <div class="heart-loader"></div>
-        <div id="clickToStart" class="preloader-text"
-            style="font-size: 1.5rem; margin-top: 2rem; opacity: 0; transition: opacity 1s ease 1s; cursor: pointer;">
-            Click to Start</div>
+        
     </div>
 
     <!-- MUSIC CONTROL -->
     <div id="musicControl" title="Toggle Music">🔊</div>
-    <audio id="bgMusic" loop></audio>
+    <audio id="bgMusic" loop preload="auto" autoplay></audio>
     <audio id="typewriterSound"></audio>
     <audio id="chimeSound"></audio>
 
@@ -1026,6 +1011,7 @@
     <div id="bridgeStage">
         <div id="portal"></div>
         <div id="bridgeMessage"></div>
+        <div id="bridgeEasterEgg">✨</div>
     </div>
 
     <!-- STAGE 2: FLIPBOOK -->
@@ -1040,8 +1026,12 @@
     <div id="heartStage">
         <div id="stars"></div>
         <div class="heart-container" id="heartContainer"></div>
-        <div class="center-message" id="centerMessage">Forever 💖</div>
+        
     </div>
+
+    <!-- EASTER EGG -->
+    <div id="easterEgg">💖</div>
+    <div class="secret-message" id="secretMessage">Made with ❤️ just for you</div>
 
     <!-- STAGE 4: FINAL MESSAGE -->
     <div id="finalMessageStage">
@@ -1258,12 +1248,15 @@
         const countdown = document.getElementById('countdown');
         const birthdayText = document.getElementById('birthdayText');
         const centerMessage = document.getElementById('centerMessage');
+        const easterEgg = document.getElementById('easterEgg');
+        const secretMessage = document.getElementById('secretMessage');
         const finalMessageStage = document.getElementById('finalMessageStage');
         const finalMessageText = document.getElementById('finalMessageText');
         const typewriterSound = document.getElementById('typewriterSound');
         const bridgeMessage = document.getElementById('bridgeMessage');
+        const bridgeEasterEgg = document.getElementById('bridgeEasterEgg');
 
-        centerMessage.textContent = CONFIG.hiddenMessage;
+        
 
         // ==================== MUSIC CONTROL ====================
         function playMusic() {
@@ -1286,6 +1279,9 @@
             musicPlaying = !musicPlaying;
             musicControl.textContent = musicPlaying ? '🔊' : '🔇';
         });
+
+        // Add this to ensure music plays on first touch on mobile
+        document.addEventListener('touchstart', playMusic, { once: true }); document.addEventListener('click', playMusic, { once: true });
 
         // ==================== ORIENTATION DETECTION ====================
         function isPortrait() {
@@ -1310,13 +1306,7 @@
 
         // ==================== STAGE 0: PRELOADER ====
         function startExperience() {
-            setTimeout(() => {
-                clickToStart.style.opacity = '1';
-                preloader.classList.add('interactive');
-                preloader.addEventListener('click', onPreloaderClick, {
-                    once: true
-                });
-            }, CONFIG.preloaderDuration);
+            setTimeout(() => { preloader.classList.add('hidden'); experienceStarted = true; playMusic(); checkOrientationAndStart(); }, CONFIG.preloaderDuration);
         }
 
         function onPreloaderClick() {
@@ -1516,9 +1506,33 @@
             bridgeMessage.style.opacity = '1'; // Make visible
             typeWriter(CONFIG.bridgeMessage, bridgeMessage, 100, () => {
                 setTimeout(() => {
+                    bridgeEasterEgg.classList.add('show');
+                }, 1000); // Show easter egg after message
+
+                setTimeout(() => {
                     bridgeStage.classList.remove('active');
                     startFlipbookStage();
-                }, 3000); // Proceed after pause
+                }, 4000); // Proceed after pause
+            });
+
+            // Easter egg click
+            bridgeEasterEgg.addEventListener('click', () => {
+                chimeSound.cloneNode(true).play().catch(() => {});
+                createConfettiBurst(bridgeEasterEgg.offsetLeft, bridgeEasterEgg.offsetTop);
+                const popup = document.createElement('div');
+                popup.className = 'secret-message';
+                popup.style.bottom = '';
+                popup.style.top = bridgeEasterEgg.offsetTop + 40 + 'px';
+                popup.style.left = bridgeEasterEgg.offsetLeft + 'px';
+                popup.textContent = 'You found the secret! 🎉';
+                document.body.appendChild(popup);
+                popup.classList.add('show');
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                    setTimeout(() => popup.remove(), 500);
+                }, 3000);
+            }, {
+                once: true
             });
         }
 
@@ -1653,7 +1667,7 @@
         // ==================== HEART SHAPE CALCULATION ====================
         function calculateHeartPoints(numPoints) {
             const points = [];
-            const scale = 0.6; // Increased scale for better spacing
+            const scale = (window.innerWidth <= 768 && window.matchMedia('(orientation: landscape)').matches) ? 0.8 : (window.innerWidth <= 768 ? 0.5 : 0.6); // Adjust scale for mobile
 
             for (let i = 0; i < numPoints; i++) {
                 const t = (i / numPoints) * 2 * Math.PI;
@@ -1698,7 +1712,7 @@
             const container = document.getElementById('heartContainer');
             container.innerHTML = '';
 
-            const numCards = Math.min(CONFIG.collageImageUrls.length, 36); // Increased for more cards
+            const numCards = window.innerWidth <= 768 ? 12 : Math.min(CONFIG.collageImageUrls.length, 36); // Lesser on mobile
             const heartPoints = calculateHeartPoints(numCards);
 
             const cards = [];
@@ -1761,7 +1775,7 @@
 
                     if (index === cards.length - 1) {
                         setTimeout(() => {
-                            centerMessage.classList.add('show');
+                            
                             startHeartCelebration();
                         }, 500);
                     }
@@ -1791,10 +1805,13 @@
             // Initial burst for particle explosion
             createFireworks(true);
 
-            // Show center message
+            // Show easter egg after a delay
             setTimeout(() => {
-                centerMessage.classList.add('show');
-            }, 1000);
+                easterEgg.classList.add('show');
+            }, 3000);
+
+            // Show center message
+            
 
             // Automatically show final message after a few seconds
             setTimeout(startFinalMessageStage, 5000);
@@ -1811,6 +1828,10 @@
             finalMessageStage.addEventListener('click', () => {
                 finalMessageStage.style.opacity = '0';
                 finalMessageStage.style.pointerEvents = 'none';
+                // Stop the celebration effects when the final message is dismissed
+                clearInterval(petalInterval);
+                clearInterval(fireworkInterval);
+                clearInterval(confettiInterval);
             }, {
                 once: true
             });
@@ -1920,6 +1941,34 @@
                 setTimeout(() => confetti.remove(), 2000);
             }
         }
+
+        // ==================== EASTER EGG ====================
+        easterEgg.addEventListener('click', () => {
+            easterEgg.style.opacity = '0';
+
+            for (let i = 0; i < 12; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = '✨';
+                sparkle.style.left = easterEgg.offsetLeft + 'px';
+                sparkle.style.top = easterEgg.offsetTop + 'px';
+                sparkle.style.animationDelay = (i * 0.1) + 's';
+                document.body.appendChild(sparkle);
+
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+
+            setTimeout(() => {
+                secretMessage.classList.add('show');
+
+                setTimeout(() => {
+                    secretMessage.classList.remove('show');
+                    setTimeout(() => {
+                        easterEgg.style.opacity = '1';
+                    }, 500);
+                }, 4000);
+            }, 500);
+        });
 
         // ==================== RESPONSIVE ====================
         window.addEventListener('resize', () => {
