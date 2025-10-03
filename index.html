@@ -954,7 +954,7 @@
             .photo-card { width: 10vw; height: 10.5vw; max-width: 70px; max-height: 75px; min-width: 40px; min-height: 45px; }
 
             .center-message {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             #finalMessageText {
@@ -979,12 +979,14 @@
     <div id="preloader">
         <div class="preloader-text">A little surprise is loading just for you…</div>
         <div class="heart-loader"></div>
-        
+        <div id="clickToStart" class="preloader-text"
+            style="font-size: 1.5rem; margin-top: 2rem; opacity: 0; transition: opacity 1s ease 1s; cursor: pointer;">
+            Click to Start</div>
     </div>
 
     <!-- MUSIC CONTROL -->
     <div id="musicControl" title="Toggle Music">🔊</div>
-    <audio id="bgMusic" loop preload="auto" autoplay></audio>
+    <audio id="bgMusic" loop preload="auto"></audio>
     <audio id="typewriterSound"></audio>
     <audio id="chimeSound"></audio>
 
@@ -1026,7 +1028,7 @@
     <div id="heartStage">
         <div id="stars"></div>
         <div class="heart-container" id="heartContainer"></div>
-        
+        <div class="center-message" id="centerMessage">Forever 💖</div>
     </div>
 
     <!-- EASTER EGG -->
@@ -1256,7 +1258,7 @@
         const bridgeMessage = document.getElementById('bridgeMessage');
         const bridgeEasterEgg = document.getElementById('bridgeEasterEgg');
 
-        
+        centerMessage.textContent = CONFIG.hiddenMessage;
 
         // ==================== MUSIC CONTROL ====================
         function playMusic() {
@@ -1281,7 +1283,8 @@
         });
 
         // Add this to ensure music plays on first touch on mobile
-        document.addEventListener('touchstart', playMusic, { once: true }); document.addEventListener('click', playMusic, { once: true });
+        document.addEventListener('touchstart', playMusic, { once: true });
+        document.addEventListener('click', playMusic, { once: true });
 
         // ==================== ORIENTATION DETECTION ====================
         function isPortrait() {
@@ -1306,7 +1309,16 @@
 
         // ==================== STAGE 0: PRELOADER ====
         function startExperience() {
-            setTimeout(() => { preloader.classList.add('hidden'); experienceStarted = true; playMusic(); checkOrientationAndStart(); }, CONFIG.preloaderDuration);
+            setTimeout(() => {
+                clickToStart.style.opacity = '1';
+                preloader.classList.add('interactive');
+                preloader.addEventListener('click', onPreloaderClick, {
+                    once: true
+                });
+                clickToStart.addEventListener('click', onPreloaderClick, {
+                    once: true
+                });
+            }, CONFIG.preloaderDuration);
         }
 
         function onPreloaderClick() {
@@ -1775,7 +1787,7 @@
 
                     if (index === cards.length - 1) {
                         setTimeout(() => {
-                            
+                            centerMessage.classList.add('show');
                             startHeartCelebration();
                         }, 500);
                     }
@@ -1811,7 +1823,9 @@
             }, 3000);
 
             // Show center message
-            
+            setTimeout(() => {
+                centerMessage.classList.add('show');
+            }, 1000);
 
             // Automatically show final message after a few seconds
             setTimeout(startFinalMessageStage, 5000);
