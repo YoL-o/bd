@@ -912,215 +912,222 @@
             }
         }
 
-/* === EASTER EGG NOTE === */
-#note-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 30000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-}
+        /* === EASTER EGG NOTE === */
+        #note-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 30000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
 
-#note-overlay.visible {
-    opacity: 1;
-    pointer-events: all;
-}
+        #note-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
 
-#note-container {
-    perspective: 1500px;
-}
+        #note-container {
+            perspective: 1500px;
+        }
 
-.note-paper {
-    position: relative;
-    width: 80vw;
-    max-width: 500px;
-    aspect-ratio: 500 / 700;
-    height: 80vh;
-    max-height: 700px;
-    transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s; /* Slightly longer for closing */
-}
+        .note-paper {
+            position: relative;
+            width: 80vw;
+            max-width: 500px;
+            aspect-ratio: 500 / 700;
+            height: 80vh;
+            max-height: 700px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s;
+            /* Slightly longer for closing */
+        }
 
-.note-fold {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    background: #fdfbf2;
-    background-image:
-        linear-gradient(rgba(219, 201, 162, 0.1) .1em, transparent .1em),
-        linear-gradient(90deg, rgba(219, 201, 162, 0.1) .1em, transparent .1em);
-    background-size: 3em 3em;
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+        .note-fold {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background: #fdfbf2;
+            background-image:
+                linear-gradient(rgba(219, 201, 162, 0.1) .1em, transparent .1em),
+                linear-gradient(90deg, rgba(219, 201, 162, 0.1) .1em, transparent .1em);
+            background-size: 3em 3em;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-/* Top-left fold */
-.note-fold.tl {
-    top: 0;
-    left: 0;
-    transform-origin: bottom right;
-    border-radius: 5px 0 0 0;
-    transform: rotate3d(1, 1, 0, -180deg) scale(0.95); /* Added rotate3d and slight scale for paper effect */
-}
+        /* Top-left fold */
+        .note-fold.tl {
+            top: 0;
+            left: 0;
+            transform-origin: bottom right;
+            border-radius: 5px 0 0 0;
+            transform: rotate3d(1, 1, 0, -180deg) scale(0.95);
+            /* Added rotate3d and slight scale for paper effect */
+        }
 
-#note-overlay.visible .note-fold.tl {
-    transform: rotate3d(1, 1, 0, 0deg) scale(1);
-    transition-delay: 0.2s; /* Quicker start */
-}
+        #note-overlay.visible .note-fold.tl {
+            transform: rotate3d(1, 1, 0, 0deg) scale(1);
+            transition-delay: 0.2s;
+            /* Quicker start */
+        }
 
-/* Top-right fold */
-.note-fold.tr {
-    top: 0;
-    right: 0;
-    transform-origin: bottom left;
-    border-radius: 0 5px 0 0;
-    transform: rotate3d(1, -1, 0, -180deg) scale(0.95);
-}
+        /* Top-right fold */
+        .note-fold.tr {
+            top: 0;
+            right: 0;
+            transform-origin: bottom left;
+            border-radius: 0 5px 0 0;
+            transform: rotate3d(1, -1, 0, -180deg) scale(0.95);
+        }
 
-#note-overlay.visible .note-fold.tr {
-    transform: rotate3d(1, -1, 0, 0deg) scale(1);
-    transition-delay: 0.4s;
-}
+        #note-overlay.visible .note-fold.tr {
+            transform: rotate3d(1, -1, 0, 0deg) scale(1);
+            transition-delay: 0.4s;
+        }
 
-/* Bottom-left fold */
-.note-fold.bl {
-    bottom: 0;
-    left: 0;
-    transform-origin: top right;
-    border-radius: 0 0 0 5px;
-    transform: rotate3d(-1, 1, 0, -180deg) scale(0.95);
-}
+        /* Bottom-left fold */
+        .note-fold.bl {
+            bottom: 0;
+            left: 0;
+            transform-origin: top right;
+            border-radius: 0 0 0 5px;
+            transform: rotate3d(-1, 1, 0, -180deg) scale(0.95);
+        }
 
-#note-overlay.visible .note-fold.bl {
-    transform: rotate3d(-1, 1, 0, 0deg) scale(1);
-    transition-delay: 0.6s;
-}
+        #note-overlay.visible .note-fold.bl {
+            transform: rotate3d(-1, 1, 0, 0deg) scale(1);
+            transition-delay: 0.6s;
+        }
 
-/* Bottom-right fold */
-.note-fold.br {
-    bottom: 0;
-    right: 0;
-    transform-origin: top left;
-    border-radius: 0 0 5px 0;
-    transform: rotate3d(-1, -1, 0, -180deg) scale(0.95);
-}
+        /* Bottom-right fold */
+        .note-fold.br {
+            bottom: 0;
+            right: 0;
+            transform-origin: top left;
+            border-radius: 0 0 5px 0;
+            transform: rotate3d(-1, -1, 0, -180deg) scale(0.95);
+        }
 
-#note-overlay.visible .note-fold.br {
-    transform: rotate3d(-1, -1, 0, 0deg) scale(1);
-    transition-delay: 0.8s;
-}
+        #note-overlay.visible .note-fold.br {
+            transform: rotate3d(-1, -1, 0, 0deg) scale(1);
+            transition-delay: 0.8s;
+        }
 
-.note-content-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
-    opacity: 0;
-    transition: opacity 0.6s 1.2s; /* Shorter delay to match new unfolding */
-    pointer-events: none;
-}
+        .note-content-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.6s 1.2s;
+            /* Shorter delay to match new unfolding */
+            pointer-events: none;
+        }
 
-#note-overlay.visible .note-content-wrapper {
-    opacity: 1;
-    pointer-events: all;
-}
+        #note-overlay.visible .note-content-wrapper {
+            opacity: 1;
+            pointer-events: all;
+        }
 
-/* NEW: Closing styles (add these AFTER the visible rules above) */
-#note-overlay.closing .note-content-wrapper {
-    opacity: 0;
-    transition: opacity 0.6s ease 0s !important; /* Fade out immediately */
-}
+        /* NEW: Closing styles (add these AFTER the visible rules above) */
+        #note-overlay.closing .note-content-wrapper {
+            opacity: 0;
+            transition: opacity 0.6s ease 0s !important;
+            /* Fade out immediately */
+        }
 
-#note-overlay.closing .note-fold.tl {
-    transform: rotate3d(1, 1, 0, -180deg) scale(0.95);
-    transition-delay: 0.8s !important; /* Reverse staggered: last to close */
-}
+        #note-overlay.closing .note-fold.tl {
+            transform: rotate3d(1, 1, 0, -180deg) scale(0.95);
+            transition-delay: 0.8s !important;
+            /* Reverse staggered: last to close */
+        }
 
-#note-overlay.closing .note-fold.tr {
-    transform: rotate3d(1, -1, 0, -180deg) scale(0.95);
-    transition-delay: 0.6s !important;
-}
+        #note-overlay.closing .note-fold.tr {
+            transform: rotate3d(1, -1, 0, -180deg) scale(0.95);
+            transition-delay: 0.6s !important;
+        }
 
-#note-overlay.closing .note-fold.bl {
-    transform: rotate3d(-1, 1, 0, -180deg) scale(0.95);
-    transition-delay: 0.4s !important;
-}
+        #note-overlay.closing .note-fold.bl {
+            transform: rotate3d(-1, 1, 0, -180deg) scale(0.95);
+            transition-delay: 0.4s !important;
+        }
 
-#note-overlay.closing .note-fold.br {
-    transform: rotate3d(-1, -1, 0, -180deg) scale(0.95);
-    transition-delay: 0.2s !important; /* First to close in reverse */
-}
+        #note-overlay.closing .note-fold.br {
+            transform: rotate3d(-1, -1, 0, -180deg) scale(0.95);
+            transition-delay: 0.2s !important;
+            /* First to close in reverse */
+        }
 
-.note-content {
-    padding: 2rem;
-    font-family: 'Caveat', cursive;
-    font-size: 1.5rem;
-    line-height: 1.6;
-    color: #4a3e3e;
-    white-space: pre-wrap;
-    overflow-y: auto;
-    height: 100%;
-}
+        .note-content {
+            padding: 2rem;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #4a3e3e;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 100%;
+        }
 
-.note-content::-webkit-scrollbar {
-    width: 8px;
-}
+        .note-content::-webkit-scrollbar {
+            width: 8px;
+        }
 
-.note-content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.05);
-    border-radius: 4px;
-}
+        .note-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
 
-.note-content::-webkit-scrollbar-thumb {
-    background: rgba(74, 62, 62, 0.3);
-    border-radius: 4px;
-}
+        .note-content::-webkit-scrollbar-thumb {
+            background: rgba(74, 62, 62, 0.3);
+            border-radius: 4px;
+        }
 
-.note-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(74, 62, 62, 0.5);
-}
+        .note-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(74, 62, 62, 0.5);
+        }
 
-#close-note {
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    background: #fdfbf2;
-    border: 2px solid #4a3e3e;
-    color: #4a3e3e;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    opacity: 0;
-    transition: opacity 0.5s 2s, transform 0.3s;
-    z-index: 10;
-}
+        #close-note {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #fdfbf2;
+            border: 2px solid #4a3e3e;
+            color: #4a3e3e;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s 2s, transform 0.3s;
+            z-index: 10;
+        }
 
-#note-overlay.visible #close-note {
-    opacity: 1;
-}
+        #note-overlay.visible #close-note {
+            opacity: 1;
+        }
 
-#close-note:hover {
-    transform: scale(1.2);
-    background: #ff4da6;
-    color: #fff;
-    border-color: #ff4da6;
-}
+        #close-note:hover {
+            transform: scale(1.2);
+            background: #ff4da6;
+            color: #fff;
+            border-color: #ff4da6;
+        }
 
         /* === STAGE 4: FINAL MESSAGE === */
         #finalMessageStage {
@@ -1285,20 +1292,22 @@
                 <div class="note-content-wrapper">
                     <div class="note-content">Dear Liv,
 
-okay so—uhm, first off, happy freakin' birthday 🎉
+                        okay so—uhm, first off, happy freakin' birthday 🎉
 
-i know i ain't exactly the smartest in the room (and probably the last person who should be trusted with surprises 😭),
-but hey, i did manage to put this together without breaking the internet—so that's a win.
+                        i know i ain't exactly the smartest in the room (and probably the last person who should be
+                        trusted with surprises 😭),
+                        but hey, i did manage to put this together without breaking the internet—so that's a win.
 
-i just wanted you to know that you're one of those people who make normal days a bit less normal.
-the kind that accidentally makes everything a little better just by being around.
+                        i just wanted you to know that you're one of those people who make normal days a bit less
+                        normal.
+                        the kind that accidentally makes everything a little better just by being around.
 
-i hope today's going to go really well for you.
-eat something sweet, laugh a lot, and maybe don't overthink how old you're getting hehehe
+                        i hope today's going to go really well for you.
+                        eat something sweet, laugh a lot, and maybe don't overthink how old you're getting hehehe
 
-happy birthday, liv — you deserve every bit of light today brings 💫
+                        happy birthday, liv — you deserve every bit of light today brings 💫
 
-— yours truely, your bff YoLo</div>
+                        — yours truely, your bff YoLo</div>
                 </div>
             </div>
             <button id="close-note">X</button>
@@ -1824,6 +1833,7 @@ happy birthday, liv — you deserve every bit of light today brings 💫
         }
 
         // ==================== STAGE 2: FLIPBOOK ====================
+        // ==================== STAGE 2: FLIPBOOK ====================
         function createFlipbook() {
             const book = document.getElementById('book');
             book.innerHTML = '';
@@ -1838,8 +1848,8 @@ happy birthday, liv — you deserve every bit of light today brings 💫
                 }))
             ];
 
-            // We need half as many page elements as we have images, plus the cover
-            const numPageElements = Math.ceil((imagePages.length - 1) / 2) + 1;
+            // We need half as many page elements as we have content sides (fronts and backs)
+            const numPageElements = Math.ceil(imagePages.length / 2);
 
             for (let i = 0; i < numPageElements; i++) {
                 const pageDiv = document.createElement('div');
@@ -1853,45 +1863,44 @@ happy birthday, liv — you deserve every bit of light today brings 💫
 
                 // Helper function to create image content
                 const createImageContent = (page) => {
-                    if (!page || page.type !== 'image') return document.createDocumentFragment();
+                    if (!page) return document.createDocumentFragment();
                     const content = document.createElement('div');
                     content.className = 'page-content';
-                    const img = document.createElement('img');
-                    img.src = page.url;
-                    content.appendChild(img);
-                    if (page.caption) {
-                        const caption = document.createElement('div');
-                        caption.className = 'page-caption';
-                        caption.textContent = page.caption;
-                        content.appendChild(caption);
+                    if (page.type === 'image') {
+                        const img = document.createElement('img');
+                        img.src = page.url;
+                        content.appendChild(img);
+                        if (page.caption) {
+                            const caption = document.createElement('div');
+                            caption.className = 'page-caption';
+                            caption.textContent = page.caption;
+                            content.appendChild(caption);
+                        }
+                    } else if (page.type === 'cover') {
+                        const coverContent = document.createElement('div');
+                        coverContent.className = 'cover-content';
+                        const img = document.createElement('img');
+                        img.className = 'cover-image';
+                        img.src = CONFIG.coverImage;
+                        coverContent.appendChild(img);
+                        const overlay = document.createElement('div');
+                        overlay.className = 'cover-overlay';
+                        overlay.textContent = 'Happy Birthday';
+                        coverContent.appendChild(overlay);
+                        content.appendChild(coverContent);
                     }
                     return content;
                 };
 
-                if (i === 0) { // Cover page
-                    front.classList.add('cover-page');
-                    const content = document.createElement('div');
-                    content.className = 'cover-content';
-                    const img = document.createElement('img');
-                    img.className = 'cover-image';
-                    img.src = CONFIG.coverImage;
-                    content.appendChild(img);
-                    const overlay = document.createElement('div');
-                    overlay.className = 'cover-overlay';
-                    overlay.textContent = 'Happy Birthday';
-                    content.appendChild(overlay);
-                    front.appendChild(content);
+                const frontPageData = imagePages[i * 2];
+                const backPageData = imagePages[i * 2 + 1];
 
-                    // Back of the cover page (first image)
-                    const backPageData = imagePages[1];
-                    back.appendChild(createImageContent(backPageData));
-                } else {
-                    // Regular pages
-                    const frontPageData = imagePages[i * 2];
-                    const backPageData = imagePages[i * 2 + 1];
-                    front.appendChild(createImageContent(frontPageData));
-                    back.appendChild(createImageContent(backPageData));
+                if (frontPageData.type === 'cover') {
+                    front.classList.add('cover-page');
                 }
+
+                front.appendChild(createImageContent(frontPageData));
+                back.appendChild(createImageContent(backPageData));
 
                 pageDiv.appendChild(front);
                 pageDiv.appendChild(back);
@@ -1905,19 +1914,25 @@ happy birthday, liv — you deserve every bit of light today brings 💫
             currentStage = 2;
             flipbookStage.classList.add('active');
 
-            const pageCount = createFlipbook();
-            const pageElements = document.querySelectorAll('.page');
+            const numPages = createFlipbook();
+            const pages = Array.from(document.querySelectorAll('.page'));
 
-            let currentPage = 0;
+            let currentFlipped = 0;
 
-            function flipNext() {
-                playMusic();
-
-                if (currentPage < pageElements.length) {
-                    pageElements[currentPage].classList.add('flipped');
-                    currentPage++;
-
-                    if (currentPage >= pageElements.length) {
+            function flipForward() {
+                if (currentFlipped < pages.length) {
+                    const page = pages[currentFlipped];
+                    page.style.zIndex = pages.length + 1; // Bring to front for animation
+                    setTimeout(() => {
+                        page.classList.add('flipped');
+                    }, 10);
+                    page.addEventListener('transitionend', () => {
+                        page.style.zIndex = -currentFlipped; // Send to back after animation
+                    }, {
+                        once: true
+                    });
+                    currentFlipped++;
+                    if (currentFlipped === pages.length) {
                         setTimeout(() => {
                             flipbookStage.classList.remove('active');
                             startHeartStage();
@@ -1926,25 +1941,50 @@ happy birthday, liv — you deserve every bit of light today brings 💫
                 }
             }
 
-            pageElements.forEach((page) => {
-                page.addEventListener('click', flipNext);
+            function flipBackward() {
+                if (currentFlipped > 0) {
+                    currentFlipped--;
+                    const page = pages[currentFlipped];
+                    page.style.zIndex = pages.length + 1; // Bring to front for animation
+                    setTimeout(() => {
+                        page.classList.remove('flipped');
+                    }, 10);
+                    page.addEventListener('transitionend', () => {
+                        page.style.zIndex = pages.length - currentFlipped; // Restore z-index
+                    }, {
+                        once: true
+                    });
+                }
+            }
+
+            const bookContainer = document.querySelector('.book-container');
+
+            bookContainer.addEventListener('click', (e) => {
+                playMusic();
+                const rect = bookContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                if (x > rect.width / 2) {
+                    flipForward();
+                } else {
+                    flipBackward();
+                }
             });
 
             let touchStartX = 0;
-            let touchEndX = 0;
-
-            document.getElementById('book').addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
+            bookContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].clientX;
             });
 
-            document.getElementById('book').addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
+            bookContainer.addEventListener('touchend', (e) => {
+                playMusic();
+                const touchEndX = e.changedTouches[0].clientX;
                 if (touchStartX - touchEndX > 50) {
-                    flipNext();
+                    flipForward();
+                } else if (touchEndX - touchStartX > 50) {
+                    flipBackward();
                 }
             });
         }
-
         // ==================== STAGE 3: HEART COLLAGE ====================
         // ==================== HEART SHAPE CALCULATION ====================
         function calculateHeartPoints(numPoints) {
