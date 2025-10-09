@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <title>Happy Birthday 💖</title>
     <style>
         * {
@@ -911,6 +912,123 @@
             }
         }
 
+        /* === EASTER EGG NOTE === */
+        #note-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 30000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #note-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #note-container {
+            perspective: 1500px;
+        }
+
+        .note-paper {
+            position: relative;
+            width: 80vw;
+            max-width: 500px;
+            height: 80vh;
+            max-height: 700px;
+            transform-style: preserve-3d;
+            transform: rotateX(90deg) scale(0.2);
+            transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        #note-overlay.visible .note-paper {
+            transform: rotateX(0deg) scale(1);
+        }
+
+        .note-flap {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            left: 0;
+            background: #fdfbf2;
+            background-image:
+                linear-gradient(rgba(219, 201, 162, 0.1) .1em, transparent .1em),
+                linear-gradient(90deg, rgba(219, 201, 162, 0.1) .1em, transparent .1em);
+            background-size: 3em 3em;
+            transform-origin: top;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backface-visibility: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .note-flap.top {
+            top: 0;
+            transform-origin: bottom;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .note-flap.bottom {
+            top: 50%;
+            transform-origin: top;
+            border-radius: 0 0 5px 5px;
+        }
+
+        #note-overlay.visible .note-flap.top {
+            transform: rotateX(0deg);
+        }
+
+        #note-overlay.visible .note-flap.bottom {
+            transform: rotateX(0deg);
+        }
+
+        #note-overlay .note-flap.top {
+            transform: rotateX(180deg);
+        }
+
+        #note-overlay .note-flap.bottom {
+            transform: rotateX(-180deg);
+        }
+
+        .note-content {
+            padding: 2rem;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #4a3e3e;
+            white-space: pre-wrap;
+        }
+
+        #close-note {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #fff;
+            border: 2px solid #4a3e3e;
+            color: #4a3e3e;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s 1s, transform 0.3s;
+        }
+
+        #note-overlay.visible #close-note {
+            opacity: 1;
+        }
+
         /* === STAGE 4: FINAL MESSAGE === */
         #finalMessageStage {
             position: fixed;
@@ -1061,6 +1179,34 @@
         <div id="stars"></div>
         <div class="heart-container" id="heartContainer"></div>
         <div class="center-message" id="centerMessage">Forever 💖</div>
+    </div>
+
+    <!-- NOTE EASTER EGG -->
+    <div id="note-overlay">
+        <div id="note-container">
+            <div class="note-paper">
+                <div class="note-flap top">
+                    <div class="note-content">Dear Liv,
+
+okay so—uhm, first off, happy freakin’ birthday 🎉
+
+i know i ain’t exactly the smartest in the room (and probably the last person who should be trusted with surprises 😭),
+but hey, i did manage to put this together without breaking the internet—so that’s a win.</div>
+                </div>
+                <div class="note-flap bottom">
+                    <div class="note-content">i just wanted you to know that you’re one of those people who make normal days a bit less normal.
+the kind that accidentally makes everything a little better just by being around.
+
+i hope today’s been kind to you.
+eat something sweet, laugh a lot, and maybe don’t overthink how old you’re getting 😌
+
+happy birthday, liv — you deserve every bit of light today brings 💫
+
+— yours truely, YoLo</div>
+                </div>
+            </div>
+            <button id="close-note">X</button>
+        </div>
     </div>
 
     <!-- EASTER EGG -->
@@ -1249,7 +1395,7 @@
             ],
             captions: [],
             hiddenMessage: 'Forever 💖',
-            finalMessage: 'Happy birthday Debby🩷,\nLong Life and Prosperity ',
+            finalMessage: 'Happy birthday Olivia🩷,\nEnjoy your day,Its all about you Today ',
             bridgeMessage: 'made just for you...',
             preloaderDuration: 3000
         };
@@ -1281,6 +1427,8 @@
         const typewriterSound = document.getElementById('typewriterSound');
         const bridgeMessage = document.getElementById('bridgeMessage');
         const bridgeEasterEgg = document.getElementById('bridgeEasterEgg');
+        const noteOverlay = document.getElementById('note-overlay');
+        const closeNoteBtn = document.getElementById('close-note');
 
         centerMessage.textContent = CONFIG.hiddenMessage;
 
@@ -1290,7 +1438,7 @@
 
             // Set start time to 15 seconds on the first play
             if (bgMusic.currentTime === 0) {
-                bgMusic.currentTime = 8;
+                bgMusic.currentTime = 5;
             }
 
             bgMusic.play().then(() => {
@@ -1584,44 +1732,32 @@
             const book = document.getElementById('book');
             book.innerHTML = '';
 
-            const pages = [{
+            const imagePages = [{
                     type: 'cover'
                 },
-                ...CONFIG.imageUrls.map((url, i) => ({
+                ...CONFIG.cimageUrls.map((url, i) => ({
                     type: 'image',
                     url,
                     caption: CONFIG.captions[i]
                 }))
             ];
 
-            pages.forEach((page, index) => {
+            // We need half as many page elements as we have images, plus the cover
+            const numPageElements = Math.ceil((imagePages.length - 1) / 2) + 1;
+
+            for (let i = 0; i < numPageElements; i++) {
                 const pageDiv = document.createElement('div');
                 pageDiv.className = 'page';
-                pageDiv.style.zIndex = pages.length - index;
+                pageDiv.style.zIndex = numPageElements - i;
 
                 const front = document.createElement('div');
                 front.className = 'page-front';
-
                 const back = document.createElement('div');
                 back.className = 'page-back';
 
-                if (page.type === 'cover') {
-                    front.classList.add('cover-page');
-                    const content = document.createElement('div');
-                    content.className = 'cover-content';
-
-                    const img = document.createElement('img');
-                    img.className = 'cover-image';
-                    img.src = CONFIG.coverImage;
-                    content.appendChild(img);
-
-                    const overlay = document.createElement('div');
-                    overlay.className = 'cover-overlay';
-                    overlay.textContent = 'Happy Birthday';
-                    content.appendChild(overlay);
-
-                    front.appendChild(content);
-                } else {
+                // Helper function to create image content
+                const createImageContent = (page) => {
+                    if (!page || page.type !== 'image') return document.createDocumentFragment();
                     const content = document.createElement('div');
                     content.className = 'page-content';
                     const img = document.createElement('img');
@@ -1633,33 +1769,40 @@
                         caption.textContent = page.caption;
                         content.appendChild(caption);
                     }
-                    front.appendChild(content);
-                }
+                    return content;
+                };
 
-                if (index < pages.length - 1) {
-                    const nextPage = pages[index + 1];
-                    if (nextPage.type === 'image') {
-                        const content = document.createElement('div');
-                        content.className = 'page-content';
-                        const img = document.createElement('img');
-                        img.src = nextPage.url;
-                        content.appendChild(img);
-                        if (nextPage.caption) {
-                            const caption = document.createElement('div');
-                            caption.className = 'page-caption';
-                            caption.textContent = nextPage.caption;
-                            content.appendChild(caption);
-                        }
-                        back.appendChild(content);
-                    }
+                if (i === 0) { // Cover page
+                    front.classList.add('cover-page');
+                    const content = document.createElement('div');
+                    content.className = 'cover-content';
+                    const img = document.createElement('img');
+                    img.className = 'cover-image';
+                    img.src = CONFIG.coverImage;
+                    content.appendChild(img);
+                    const overlay = document.createElement('div');
+                    overlay.className = 'cover-overlay';
+                    overlay.textContent = 'Happy Birthday';
+                    content.appendChild(overlay);
+                    front.appendChild(content);
+
+                    // Back of the cover page (first image)
+                    const backPageData = imagePages[1];
+                    back.appendChild(createImageContent(backPageData));
+                } else {
+                    // Regular pages
+                    const frontPageData = imagePages[i * 2];
+                    const backPageData = imagePages[i * 2 + 1];
+                    front.appendChild(createImageContent(frontPageData));
+                    back.appendChild(createImageContent(backPageData));
                 }
 
                 pageDiv.appendChild(front);
                 pageDiv.appendChild(back);
                 book.appendChild(pageDiv);
-            });
+            }
 
-            return pages.length;
+            return numPageElements;
         }
 
         function startFlipbookStage() {
@@ -1839,6 +1982,21 @@
                 animateHeartAssembly(cards);
             }, 500);
         }
+
+        // ==================== NOTE EASTER EGG ====================
+        function openNote() {
+            noteOverlay.classList.add('visible');
+        }
+
+        function closeNote() {
+            noteOverlay.classList.remove('visible');
+        }
+
+        centerMessage.addEventListener('click', openNote);
+        closeNoteBtn.addEventListener('click', closeNote);
+        noteOverlay.addEventListener('click', (e) => {
+            if (e.target === noteOverlay) closeNote();
+        });
 
         // ==================== HEART CELEBRATION ====================
         function startHeartCelebration() {
