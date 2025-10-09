@@ -871,6 +871,43 @@
             }
         }
 
+        /* === IMAGE MODAL === */
+        #imageModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 40000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        #imageModal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #imageModal img {
+            max-width: 95vw;
+            max-height: 95vh;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 105, 180, 0.6);
+            transform: scale(0.7);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #imageModal.show img {
+            transform: scale(1);
+        }
+
         .secret-message {
             position: fixed;
             bottom: 70px;
@@ -1220,6 +1257,11 @@
                 bottom: 20px;
                 right: 20px;
             }
+
+            #imageModal img {
+                max-width: 98vw;
+                max-height: 98vh;
+            }
         }
     </style>
 </head>
@@ -1317,6 +1359,11 @@
     <!-- EASTER EGG -->
     <div id="easterEgg">💖</div>
     <div class="secret-message" id="secretMessage">Made with ❤️ just for you</div>
+
+    <!-- IMAGE MODAL -->
+    <div id="imageModal">
+        <img id="modalImage" src="" alt="Enlarged view">
+    </div>
 
     <!-- STAGE 4: FINAL MESSAGE -->
     <div id="finalMessageStage">
@@ -1513,7 +1560,7 @@
                 "Looks really good on you",
             ],
             hiddenMessage: 'Forever 💖',
-            finalMessage: 'Happy birthday Olivia🩷,\nEnjoy your day,Its all about you Today ',
+            finalMessage: 'Happy birthday Olivia🩷,\nLong Life And Prosperity! ',
             bridgeMessage: 'made just for you...',
             preloaderDuration: 500
         };
@@ -1547,6 +1594,8 @@
         const bridgeEasterEgg = document.getElementById('bridgeEasterEgg');
         const noteOverlay = document.getElementById('note-overlay');
         const closeNoteBtn = document.getElementById('close-note');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
 
         centerMessage.textContent = CONFIG.hiddenMessage;
 
@@ -2092,12 +2141,17 @@
 
                 // Add click interaction for pop up
                 card.addEventListener('click', () => {
+                    const imgSrc = card.querySelector('img').src;
                     const isActive = card.classList.contains('active');
+
+                    if (isActive) {
+                        openImageModal(imgSrc);
+                        return;
+                    }
+
                     document.querySelectorAll('.photo-card.active').forEach(c => c.classList.remove(
                         'active'));
-                    if (!isActive) {
-                        card.classList.add('active');
-                    }
+                    card.classList.add('active');
                 });
 
                 cards.push(card);
@@ -2134,6 +2188,20 @@
                 animateHeartAssembly(cards);
             }, 500);
         }
+
+        // ==================== IMAGE MODAL ====================
+        function openImageModal(src) {
+            modalImage.src = src;
+            imageModal.classList.add('show');
+        }
+
+        function closeImageModal() {
+            imageModal.classList.remove('show');
+        }
+
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) closeImageModal();
+        });
 
         // ==================== NOTE EASTER EGG ====================
         function openNote() {
