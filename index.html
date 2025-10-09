@@ -1335,6 +1335,9 @@
                 '/assets/image4.jpg',
                 '/assets/image5.jpg',
                 '/assets/image6.jpg',
+                '/assets/image7.jpg',
+                '/assets/image8.jpg',
+                '/assets/image9.jpg',
             ],
             collageImageUrls: [
                 '/assets/image3.jpg',
@@ -1834,21 +1837,24 @@
 
         // ==================== STAGE 2: FLIPBOOK ====================
         // ==================== STAGE 2: FLIPBOOK ====================
+        // ==================== STAGE 2: FLIPBOOK ====================
         function createFlipbook() {
             const book = document.getElementById('book');
             book.innerHTML = '';
 
+            // Prepare page data: cover + image pages
             const imagePages = [{
-                    type: 'cover'
+                    type: 'cover',
+                    url: CONFIG.coverImage
                 },
                 ...CONFIG.imageUrls.map((url, i) => ({
                     type: 'image',
                     url,
-                    caption: CONFIG.captions[i]
+                    caption: CONFIG.captions[i] || ''
                 }))
             ];
 
-            // We need half as many page elements as we have content sides (fronts and backs)
+            // Each physical page has a front and back, so we need ceil((total sides) / 2) pages
             const numPageElements = Math.ceil(imagePages.length / 2);
 
             for (let i = 0; i < numPageElements; i++) {
@@ -1861,46 +1867,44 @@
                 const back = document.createElement('div');
                 back.className = 'page-back';
 
-                // Helper function to create image content
-                const createImageContent = (page) => {
-                    if (!page) return document.createDocumentFragment();
+                // Helper function to create page content
+                const createPageContent = (pageData) => {
                     const content = document.createElement('div');
                     content.className = 'page-content';
-                    if (page.type === 'image') {
-                        const img = document.createElement('img');
-                        img.src = page.url;
-                        content.appendChild(img);
-                        if (page.caption) {
-                            const caption = document.createElement('div');
-                            caption.className = 'page-caption';
-                            caption.textContent = page.caption;
-                            content.appendChild(caption);
-                        }
-                    } else if (page.type === 'cover') {
+                    if (!pageData) return content; // Empty for unpaired back page
+                    if (pageData.type === 'cover') {
+                        front.classList.add('cover-page');
                         const coverContent = document.createElement('div');
                         coverContent.className = 'cover-content';
                         const img = document.createElement('img');
                         img.className = 'cover-image';
-                        img.src = CONFIG.coverImage;
+                        img.src = pageData.url;
                         coverContent.appendChild(img);
                         const overlay = document.createElement('div');
                         overlay.className = 'cover-overlay';
                         overlay.textContent = 'Happy Birthday';
                         coverContent.appendChild(overlay);
                         content.appendChild(coverContent);
+                    } else if (pageData.type === 'image') {
+                        const img = document.createElement('img');
+                        img.src = pageData.url;
+                        content.appendChild(img);
+                        if (pageData.caption) {
+                            const caption = document.createElement('div');
+                            caption.className = 'page-caption';
+                            caption.textContent = pageData.caption;
+                            content.appendChild(caption);
+                        }
                     }
                     return content;
                 };
 
+                // Assign images to front and back
                 const frontPageData = imagePages[i * 2];
                 const backPageData = imagePages[i * 2 + 1];
 
-                if (frontPageData.type === 'cover') {
-                    front.classList.add('cover-page');
-                }
-
-                front.appendChild(createImageContent(frontPageData));
-                back.appendChild(createImageContent(backPageData));
+                front.appendChild(createPageContent(frontPageData));
+                back.appendChild(createPageContent(backPageData));
 
                 pageDiv.appendChild(front);
                 pageDiv.appendChild(back);
@@ -1922,12 +1926,11 @@
             function flipForward() {
                 if (currentFlipped < pages.length) {
                     const page = pages[currentFlipped];
-                    page.style.zIndex = pages.length + 1; // Bring to front for animation
-                    setTimeout(() => {
-                        page.classList.add('flipped');
-                    }, 10);
+                    page.style.zIndex = pages.length + currentFlipped; // Bring to front
+                    page.classList.add('flipped');
+                    page.style.pointerEvents = 'none'; // Prevent multiple clicks during animation
                     page.addEventListener('transitionend', () => {
-                        page.style.zIndex = -currentFlipped; // Send to back after animation
+                        page.style.pointerEvents = 'auto'; // Re-enable after flip
                     }, {
                         once: true
                     });
@@ -1945,12 +1948,12 @@
                 if (currentFlipped > 0) {
                     currentFlipped--;
                     const page = pages[currentFlipped];
-                    page.style.zIndex = pages.length + 1; // Bring to front for animation
-                    setTimeout(() => {
-                        page.classList.remove('flipped');
-                    }, 10);
+                    page.style.zIndex = pages.length + currentFlipped; // Bring to front
+                    page.classList.remove('flipped');
+                    page.style.pointerEvents = 'none'; // Prevent multiple clicks during animation
                     page.addEventListener('transitionend', () => {
                         page.style.zIndex = pages.length - currentFlipped; // Restore z-index
+                        page.style.pointerEvents = 'auto'; // Re-enable after flip
                     }, {
                         once: true
                     });
@@ -1984,7 +1987,9 @@
                     flipBackward();
                 }
             });
-        }
+        } 
+        
+        
         // ==================== STAGE 3: HEART COLLAGE ====================
         // ==================== HEART SHAPE CALCULATION ====================
         function calculateHeartPoints(numPoints) {
