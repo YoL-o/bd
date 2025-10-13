@@ -1241,9 +1241,12 @@
         /* === RESPONSIVE ADJUSTMENTS === */
         @media (max-width: 768px) and (orientation: landscape) {
             .book {
-                width: 90vw;
-                height: 85vh;
-                max-height: none; /* Remove max-height constraint in landscape */
+                width: 95vw;
+                /* Increase width to take up more screen space */
+                height: 90vh;
+                /* Slightly taller to accommodate larger images */
+                max-height: none;
+                /* Remove max-height constraint */
             }
 
             .heart-container {
@@ -1286,9 +1289,32 @@
             }
 
             .page-content img {
-                max-width: 100%;
-                max-height: 90%;
-                object-fit: contain; /* Use contain to prevent cropping */
+                max-width: 98%;
+                /* Increase to fill more of the page width */
+                max-height: 92%;
+                /* Increase to allow taller images */
+                object-fit: contain;
+                /* Ensure the entire image is visible without cropping */
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .page-front,
+            .page-back {
+                padding: 0.5rem;
+                /* Reduce padding to allow images to take up more space */
+            }
+
+            .page-caption {
+                font-size: 0.9rem;
+                /* Slightly smaller caption to fit better */
+                margin-top: 0.5rem;
+                /* Reduce margin to make room */
+            }
+
+            .cover-overlay {
+                font-size: 1.8rem;
+                /* Slightly smaller text to fit better */
             }
         }
     </style>
@@ -1333,7 +1359,6 @@
     <div id="bridgeStage">
         <div id="portal"></div>
         <div id="bridgeMessage"></div>
-        <div id="bridgeEasterEgg">✨</div>
     </div>
 
     <!-- STAGE 2: FLIPBOOK -->
