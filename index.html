@@ -777,6 +777,22 @@
             }
         }
 
+        #backToBookArrow {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: 2.5rem;
+            color: #ff4da6;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            text-shadow: 0 0 10px #ff4da6;
+        }
+
+        #backToBookArrow:hover {
+            transform: scale(1.2);
+        }
+
         /* === CELEBRATION EFFECTS === */
         .petal {
             position: fixed;
@@ -1262,6 +1278,12 @@
                 max-width: 98vw;
                 max-height: 98vh;
             }
+
+            .page-content img {
+                max-width: 100%;
+                max-height: 90%;
+                object-fit: contain; /* Use contain to prevent cropping */
+            }
         }
     </style>
 </head>
@@ -1318,6 +1340,7 @@
 
     <!-- STAGE 3: HEART COLLAGE -->
     <div id="heartStage">
+        <div id="backToBookArrow" title="Go Back">←</div>
         <div id="stars"></div>
         <div class="heart-container" id="heartContainer"></div>
         <div class="center-message" id="centerMessage">Forever 💖</div>
@@ -1571,7 +1594,7 @@
                 "You really are beautifullll.",
             ],
             hiddenMessage: 'Forever 💖',
-            finalMessage: 'Happy birthday Debby🩷,\nLong Life And Prosperity! ',
+            finalMessage: 'Happy birthday Debby,\nLong Life And Prosperity!🩷 ',
             bridgeMessage: 'made just for you...',
             preloaderDuration: 500
         };
@@ -1606,6 +1629,7 @@
         const noteOverlay = document.getElementById('note-overlay');
         const closeNoteBtn = document.getElementById('close-note');
         const imageModal = document.getElementById('imageModal');
+        const backToBookArrow = document.getElementById('backToBookArrow');
         const modalImage = document.getElementById('modalImage');
 
         centerMessage.textContent = CONFIG.hiddenMessage;
@@ -2153,16 +2177,7 @@
                 // Add click interaction for pop up
                 card.addEventListener('click', () => {
                     const imgSrc = card.querySelector('img').src;
-                    const isActive = card.classList.contains('active');
-
-                    if (isActive) {
-                        openImageModal(imgSrc);
-                        return;
-                    }
-
-                    document.querySelectorAll('.photo-card.active').forEach(c => c.classList.remove(
-                        'active'));
-                    card.classList.add('active');
+                    openImageModal(imgSrc);
                 });
 
                 cards.push(card);
@@ -2212,6 +2227,20 @@
 
         imageModal.addEventListener('click', (e) => {
             if (e.target === imageModal) closeImageModal();
+        });
+
+        backToBookArrow.addEventListener('click', () => {
+            // Hide heart stage
+            heartStage.classList.remove('active');
+
+            // Stop celebration effects
+            clearInterval(petalInterval);
+            clearInterval(fireworkInterval);
+            clearInterval(confettiInterval);
+            easterEgg.classList.remove('show');
+
+            // Show flipbook stage
+            startFlipbookStage();
         });
 
         // ==================== NOTE EASTER EGG ====================
