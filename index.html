@@ -1240,6 +1240,12 @@
 
         /* === RESPONSIVE ADJUSTMENTS === */
         @media (max-width: 768px) and (orientation: landscape) {
+            .book {
+                width: 90vw;
+                height: 85vh;
+                max-height: none; /* Remove max-height constraint in landscape */
+            }
+
             .heart-container {
                 width: min(90vw, 120vh);
                 height: min(90vw, 120vh);
